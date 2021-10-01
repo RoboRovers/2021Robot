@@ -55,7 +55,10 @@ import edu.wpi.cscore.UsbCamera;
  * By default, periodic methods are called every 20ms; this can be changed by overriding the getPeriod() method.
  * 
  * 
- * 
+ * TO DO:
+ * 1. Test Motors (Uncomment if Nec.)
+ * 2. Lifter Arms
+ * 3. Fix Lighting
  * 
  */
 public class Robot extends TimedRobot {
@@ -76,7 +79,7 @@ public class Robot extends TimedRobot {
   private final MjpegServer       jpegServer1   = new MjpegServer("serve_USB Camera", 25); //mJpegServer
   private final CvSink            cvSink        = new CvSink("opencv_USB Camera 0");    //CvSink
 
-  
+  //sample
 
     
   public static boolean toggleOn;
@@ -85,15 +88,16 @@ public class Robot extends TimedRobot {
   public static boolean driveSwitch;
   public static boolean togglePressed2;
 
+    
 
   /*
   private int numpaths;
-  private String path;
+	private String path;
   public static Recorder recorder;
-  public static boolean record;
-  public static boolean store;*(/)
+	public static boolean record;
+	public static boolean store;*(/)
 
-  
+
 
   
   //private final AnalogInput       m_distance    = new AnalogInput(0);                   //Distance Sensor
@@ -123,26 +127,32 @@ public class Robot extends TimedRobot {
   jpegServer1.setSource(camera);
   cvSink.setSource(camera);
   */
-  
-  
+  m_intake.setSpeed(-0.7);
+  //m_launcher2.setSpeed(-0.7);
 
-  toggleOn = false;
+  toggleOn = true;
 
-  Truetoggle = false;
-  togglePressed2 = false;
+  Truetoggle = true;
+  togglePressed2 = true;
 
+
+  //False = Normal Controls, True = Reversed Controls
   togglePressed = false;
+  
+  
+  //Keep false
   driveSwitch = false;
   togglePressed2 = false;
+
   /*recorder = new Recorder(10000);
   boolean toggleOn = false;
   boolean togglePressed = false;
 
   numpaths = 0;
-  init();
+	init();
   recorder.setCurrentWritefile(1);
-  recorder.setCurrentReadfile(0);
-  Recorder.initWriter();
+	recorder.setCurrentReadfile(0);
+	Recorder.initWriter();
   Recorder.initReader();*/
   
   }
@@ -250,7 +260,7 @@ public class Robot extends TimedRobot {
     {
       ReverseControls();
       try {
-        Thread.sleep(100);
+        Thread.sleep(175);
       } catch (InterruptedException e) {
         //TODO: handle exception
       }
@@ -284,11 +294,13 @@ public class Robot extends TimedRobot {
 
 
     //This controls the intake and outtake motor (tank drive)
-    if (m_controller.getY() > 0.69) //If the controller's joystick y axis is greater than 0.69
+    /*if (m_stick.getRawButton(6)) //If the Joystick's Trigger is pressed
     {
+      Intake();
       //m_intake.setSpeed(0.70); //speed is set to 0.70
     }
-    else if(m_controller.getY() < -0.69) //If the controller's joystick y axis is less than 0.69
+    */
+    /*(else if(m_controller.getY() < -0.69) //If the controller's joystick y axis is less than 0.69
     {
       //m_intake.setSpeed(-0.70); //speed is set to -0.70
     }
@@ -298,29 +310,31 @@ public class Robot extends TimedRobot {
     }
     else if (m_controller.getRawButton(1)) //if button A is pressed
     {
-      Intake();  //Turn on intake motor
+      //Intake();  //Turn on intake motor
     }
     else if (m_controller.getRawButton(3)) //if button B is pressed
     {
-      Outtake(); //Turn on outtake motor
+      //Outtake(); //Turn on outtake motor
     }
     else
     {
       m_intake.stopMotor(); //Stop intake motor
     }
 
-     
+     */
+
+    //Launch
 
     
     if (m_controller.getRawButton(2)) 
     {
-      
+    
       m_launcher1.setSpeed(0.6);  //Bottom
       m_launcher2.setSpeed(-0.5); //Top
     }
     else if (m_controller.getRawButton(4))
     {
-      Launcher(-0.3);
+      //Launcher(-0.3);
     }
     else 
     {
@@ -330,7 +344,7 @@ public class Robot extends TimedRobot {
 
     if(m_controller.getRawButtonPressed(7))
     {
-      SwitchDrive();
+     // SwitchDrive();
       try {
         Thread.sleep(100);
       } catch (InterruptedException e) {
@@ -342,7 +356,7 @@ public class Robot extends TimedRobot {
     
     if(m_stick.getRawButtonPressed(7))
     {
-      SwitchDrive();
+     // SwitchDrive();
       try {
         Thread.sleep(100);
       } catch (InterruptedException e) {
@@ -350,6 +364,8 @@ public class Robot extends TimedRobot {
       }
     }
 
+
+  //Lighting
                                   // sensor code. Might work? Probably not.
     /*double gapLength = 60.96;
 
@@ -362,33 +378,36 @@ public class Robot extends TimedRobot {
     else Stop();*/
 
 
-
-
-
-
     /*if (m_stick.getDirectionDegrees() <= 20  || (m_stick.getDirectionDegrees() >=  70 && m_stick.getDirectionDegrees() <= 110))
     {
       m_robotDrive.arcadeDrive(-(m_stick.getY()), m_stick.getX());
     }
     else m_robotDrive.stopMotor();*/
 
-    //Spins m_intake
-    /*if(m_stick.getRawButton(3)) //Intake
+    //REVISE + 
+    
+    //INTAKE OUTTAKE CONTROLS
+    
+    //Intake
+    if(m_stick.getRawButtonPressed(3)) 
     {
-      m_light.set(0.61);
+      //m_light.set(0.61);
       m_intake.setSpeed(-0.4);
     }
-    else if(m_stick.getRawButton(4)) //Outtake
+    //Outtake
+    else if(m_stick.getRawButton(4)) 
     {
       m_light.set(0.69);
       m_intake.setSpeed(0.4);
     }
-    else
+    
+    if (m_stick.getRawButtonPressed(6))
     {
-      m_light.stopMotor();
       m_intake.stopMotor();
     }
 
+
+    /*
     if (m_controller.getRawButton(1))
     {
       m_light.set(0.77); //Green Light
@@ -428,20 +447,16 @@ public class Robot extends TimedRobot {
     m_intake.setSpeed(-(m_stick.getY() / 2));
 */
   }
-  /*
   
+  
+  
+  //Reverses all controls by toggling togglePressed
   public void ReverseControls()
   {
-      if (!togglePressed)
-      {
-        toggleOn = !toggleOn;
-        togglePressed = true;
-      }
-      else 
-      {
-        togglePressed = false;
-      }
+      togglePressed = !togglePressed;
   }
+
+  /*
   public void SwitchDrive()
   {
     if (!togglePressed2)
@@ -463,12 +478,13 @@ public class Robot extends TimedRobot {
       m_robotDrive.arcadeDrive(Mspeed,Mrotation);
     }
   }
-  
-  public void Intake()
+  */
+  /*public void Intake()
   {
     //m_light.set(0.61);
     m_intake.setSpeed(0.7);
   }
+  */
 
   public void Outtake()
   {
@@ -498,4 +514,3 @@ public class Robot extends TimedRobot {
 
 
 //
-
