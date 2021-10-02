@@ -12,6 +12,7 @@ import java.lang.ModuleLayer.Controller;
 import java.sql.Driver;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.PWMSparkMax;
 import edu.wpi.first.wpilibj.PWMSpeedController;
 import edu.wpi.first.wpilibj.PWMTalonFX;
@@ -84,7 +85,7 @@ public class Robot extends TimedRobot {
     
   public static boolean toggleOn;
   public static boolean Truetoggle;
-  public static boolean togglePressed;
+  public static boolean controlsReversed;
   public static boolean driveSwitch;
   public static boolean togglePressed2;
 
@@ -127,7 +128,7 @@ public class Robot extends TimedRobot {
   jpegServer1.setSource(camera);
   cvSink.setSource(camera);
   */
-  m_intake.setSpeed(-0.7);
+  //m_intake.setSpeed(-0.7);
   //m_launcher2.setSpeed(-0.7);
 
   toggleOn = true;
@@ -137,7 +138,7 @@ public class Robot extends TimedRobot {
 
 
   //False = Normal Controls, True = Reversed Controls
-  togglePressed = false;
+  controlsReversed = false;
   
   
   //Keep false
@@ -256,18 +257,32 @@ public class Robot extends TimedRobot {
     m_robotDrive.arcadeDrive(change * -(m_stick.getY()),change * m_stick.getX());*/
 
 
-    if (m_stick.getRawButton(2))
+    if (m_stick.getRawButtonReleased(2))
     {
-      ReverseControls();
+      //ReverseControls();
+      controlsReversed = !controlsReversed;
+      /*
       try {
-        Thread.sleep(175);
+        Thread.sleep(500);
       } catch (InterruptedException e) {
         //TODO: handle exception
-      }
+      }*/
     }
-    if (togglePressed == true)
+    if (m_stick.getRawButtonReleased(6)) //if button A is pressed
     {
-      System.out.println("Button has been toggled");
+      System.out.println("intake button pressed");
+      //m_intake.setSpeed(1.00);  //Turn on intake motor
+      Intake();
+    }
+    if (m_stick.getRawButtonReleased(3)) //if button B is pressed
+    {
+      m_intake.stopMotor();
+      System.out.println("outtake button pressed");
+      //Outtake(); //Turn on outtake motor
+    }
+    if (controlsReversed)
+    {
+      //System.out.println("Button has been toggled");
       if (!driveSwitch) //Joystick
       {
           m_robotDrive.arcadeDrive((m_stick.getY()),-m_stick.getX(), true);
@@ -280,7 +295,7 @@ public class Robot extends TimedRobot {
     }
     else
     {
-      System.out.println("Button has not been toggled");
+      //System.out.println("Button has not been toggled");
       if (!driveSwitch) //Joystick
       {
           m_robotDrive.arcadeDrive(-(m_stick.getY()), (m_stick.getX()), true);
@@ -294,34 +309,42 @@ public class Robot extends TimedRobot {
 
 
     //This controls the intake and outtake motor (tank drive)
-    /*if (m_stick.getRawButton(6)) //If the Joystick's Trigger is pressed
+    //if (m_stick.getRawButton(6)) //If the Joystick's Trigger is pressed
+    /*
+    if (m_controller.getY() > -0.69)
     {
-      Intake();
-      //m_intake.setSpeed(0.70); //speed is set to 0.70
+      //Intake();
+      //System.out.println("intake button pressed");
+      m_intake.setSpeed(0.70); //speed is set to 0.70
     }
-    */
-    /*(else if(m_controller.getY() < -0.69) //If the controller's joystick y axis is less than 0.69
+    
+    else if(m_controller.getY() < -0.69) //If the controller's joystick y axis is less than 0.69
     {
-      //m_intake.setSpeed(-0.70); //speed is set to -0.70
+      m_intake.setSpeed(-0.70); //speed is set to -0.70
     }
     else if(m_controller.getY() > 0.1 || m_controller.getY() < -0.1) //if the controlller's joystick y axis is between 0.1 and -0.1
     {
-      //m_intake.setSpeed(- (m_controller.getY())); //User controlled speed
+      m_intake.setSpeed(- (m_controller.getY())); //User controlled speed
     }
-    else if (m_controller.getRawButton(1)) //if button A is pressed
+    else if (m_stick.getRawButtonReleased(6)) //if button A is pressed
     {
-      //Intake();  //Turn on intake motor
+      System.out.println("intake button pressed");
+      //m_intake.setSpeed(1.00);  //Turn on intake motor
+      Intake();
     }
-    else if (m_controller.getRawButton(3)) //if button B is pressed
+    else if (m_stick.getRawButtonReleased(3)) //if button B is pressed
     {
+      m_intake.stopMotor();
+      System.out.println("outtake button pressed");
       //Outtake(); //Turn on outtake motor
     }
     else
     {
       m_intake.stopMotor(); //Stop intake motor
     }
-
-     */
+    */
+    
+     
 
     //Launch
 
@@ -453,7 +476,7 @@ public class Robot extends TimedRobot {
   //Reverses all controls by toggling togglePressed
   public void ReverseControls()
   {
-      togglePressed = !togglePressed;
+    controlsReversed = !controlsReversed;
   }
 
   /*
@@ -479,12 +502,19 @@ public class Robot extends TimedRobot {
     }
   }
   */
-  /*public void Intake()
-  {
+  public void Intake()
+  {//Pre-codition outlined in documentation
+    //m_intake.SetMaxPositivePWM (254);
+    //m_intake.SetMinPositivePWM (129);
+    //m_intake.SetCenterPWM(128);
+    //m_intake.SetMaxNegitivePWM (127);
+    //m_intake.SetMinNegitivePWM (2);
     //m_light.set(0.61);
-    m_intake.setSpeed(0.7);
+    m_intake.setRaw(100);
+    
+    
   }
-  */
+  
 
   public void Outtake()
   {
