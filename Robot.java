@@ -261,6 +261,12 @@ public class Robot extends TimedRobot {
     {
       //ReverseControls();
       controlsReversed = !controlsReversed;
+      
+      //m_launcher1.enableDeadbandElimination(true);
+      m_launcher1.setSpeed(0.6);
+      
+      //System.out.println(m_intake.getRaw());
+      
       /*
       try {
         Thread.sleep(500);
@@ -268,15 +274,15 @@ public class Robot extends TimedRobot {
         //TODO: handle exception
       }*/
     }
-    if (m_stick.getRawButtonReleased(6)) //if button A is pressed
+    if (m_stick.getRawButtonReleased(5)) //if button A is pressed
     {
       System.out.println("intake button pressed");
-      //m_intake.setSpeed(1.00);  //Turn on intake motor
-      Intake();
+        //Turn on intake motor
+      //Intake();
     }
     if (m_stick.getRawButtonReleased(3)) //if button B is pressed
     {
-      m_intake.stopMotor();
+      m_launcher1.stopMotor();
       System.out.println("outtake button pressed");
       //Outtake(); //Turn on outtake motor
     }
@@ -348,7 +354,7 @@ public class Robot extends TimedRobot {
 
     //Launch
 
-    
+    /*
     if (m_controller.getRawButton(2)) 
     {
     
@@ -363,7 +369,7 @@ public class Robot extends TimedRobot {
     {
       m_launcher1.stopMotor();
       m_launcher2.stopMotor();
-    }
+    }*/
 
     if(m_controller.getRawButtonPressed(7))
     {
@@ -510,8 +516,9 @@ public class Robot extends TimedRobot {
     //m_intake.SetMaxNegitivePWM (127);
     //m_intake.SetMinNegitivePWM (2);
     //m_light.set(0.61);
-    m_intake.setRaw(100);
     
+    
+
     
   }
   
