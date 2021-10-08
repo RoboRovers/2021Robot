@@ -68,7 +68,7 @@ public class Robot extends TimedRobot {
   private final PWMVictorSPX      m_left        = new PWMVictorSPX(0);                  //Sets up left side of drive motors
   private final PWMVictorSPX      m_right       = new PWMVictorSPX(1);                  //Sets up right side of drive motors
   private final DifferentialDrive m_robotDrive  = new DifferentialDrive(m_left,m_right);//Initializes the drive function to use both sets of drive motors
-  private final PWMVictorSPX      m_intake      = new PWMVictorSPX(2);                  //for intake/outtake
+  private final PWMVictorSPX      m_intake      = new PWMVictorSPX(9);                  //for intake/outtake
   private final PWMVictorSPX      m_launcher1   = new PWMVictorSPX(4);    //bottom      //for The Launching Mechanism
   private final PWMVictorSPX      m_launcher2   = new PWMVictorSPX(5);                  //top Motor
   private final PWMSparkMax       m_light       = new PWMSparkMax(3);                   //for the lights
@@ -256,15 +256,13 @@ public class Robot extends TimedRobot {
     //Drive(-(m_stick.getY()), m_stick.getX());
     m_robotDrive.arcadeDrive(change * -(m_stick.getY()),change * m_stick.getX());*/
 
-
+    if (m_stick.getTriggerReleased()) {
+      m_intake.setSpeed(0.2);
+    }
     if (m_stick.getRawButtonReleased(2))
     {
       //ReverseControls();
       controlsReversed = !controlsReversed;
-      
-      //m_launcher1.enableDeadbandElimination(true);
-      m_launcher1.setSpeed(0.6);
-      
       //System.out.println(m_intake.getRaw());
       
       /*
@@ -274,16 +272,21 @@ public class Robot extends TimedRobot {
         //TODO: handle exception
       }*/
     }
+    if (m_stick.getRawButtonReleased(3)) {
+      Launcher(0.2);
+    }
     if (m_stick.getRawButtonReleased(5)) //if button A is pressed
     {
       System.out.println("intake button pressed");
         //Turn on intake motor
       //Intake();
     }
-    if (m_stick.getRawButtonReleased(3)) //if button B is pressed
+    if (m_stick.getRawButtonReleased(12)) //if button B is pressed
     {
       m_launcher1.stopMotor();
-      System.out.println("outtake button pressed");
+      m_launcher2.stopMotor();
+      m_intake.stopMotor();
+      //System.out.println("outtake button pressed");
       //Outtake(); //Turn on outtake motor
     }
     if (controlsReversed)
@@ -421,18 +424,18 @@ public class Robot extends TimedRobot {
     if(m_stick.getRawButtonPressed(3)) 
     {
       //m_light.set(0.61);
-      m_intake.setSpeed(-0.4);
+     // m_intake.setSpeed(-0.4);
     }
     //Outtake
     else if(m_stick.getRawButton(4)) 
     {
       m_light.set(0.69);
-      m_intake.setSpeed(0.4);
+      //m_intake.setSpeed(0.4);
     }
     
     if (m_stick.getRawButtonPressed(6))
     {
-      m_intake.stopMotor();
+      //m_intake.stopMotor();
     }
 
 
@@ -509,12 +512,7 @@ public class Robot extends TimedRobot {
   }
   */
   public void Intake()
-  {//Pre-codition outlined in documentation
-    //m_intake.SetMaxPositivePWM (254);
-    //m_intake.SetMinPositivePWM (129);
-    //m_intake.SetCenterPWM(128);
-    //m_intake.SetMaxNegitivePWM (127);
-    //m_intake.SetMinNegitivePWM (2);
+  {
     //m_light.set(0.61);
     
     
@@ -526,7 +524,7 @@ public class Robot extends TimedRobot {
   public void Outtake()
   {
     //m_light.set(0.69);
-    m_intake.setSpeed(-0.7);
+    //m_intake.setSpeed(-0.7);
   }
 
   public void Launcher(double speed)
