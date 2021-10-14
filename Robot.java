@@ -94,6 +94,7 @@ public class Robot extends TimedRobot {
 
   public static boolean controlsReversed;
   public static boolean driveSwitch;
+  public static int autonomousTestCount;
 
   public void Launcher(double speed)
   {
@@ -126,6 +127,7 @@ public class Robot extends TimedRobot {
 
     if (m_stick.getRawButtonReleased(3)) {
       Launcher(0.2);
+      m_intake.setSpeed(0.2);
     }
 
     if (m_stick.getRawButtonReleased(12)) 
@@ -147,19 +149,26 @@ public class Robot extends TimedRobot {
   
   @Override
   public void autonomousInit() {
-    m_timer.reset();
-    m_timer.start();
+    //m_timer.reset();
+    //m_timer.start();
    // m_encoder.reset(); //resets encoder to 0
    // m_encoder.setDistancePerPulse(1.0/360.0);
+   autonomousTestCount = 0;
   }
 
   @Override
   public void autonomousPeriodic() {
-
-   
-    //m_left.setSpeed(0.50);
-    //m_right.setSpeed(-0.50);
-
+    //m_intake.setSpeed(0.2);
+    
+    
+    if (autonomousTestCount < 100) {
+      m_robotDrive.arcadeDrive(0.5, 0);
+      autonomousTestCount += 1;
+    }
+    else {
+      m_robotDrive.arcadeDrive(0, 0);
+    }
+    
 
     /*if (m_timer.get() < 3.0) {
       m_robotDrive.arcadeDrive(0.4, 0.0); // drive forwards half speed
