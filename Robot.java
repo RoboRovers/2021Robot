@@ -140,6 +140,7 @@ public class Robot extends TimedRobot {
     if (controlsReversed)
     {
       m_robotDrive.arcadeDrive((m_stick.getY()),-m_stick.getX(), true);
+      
     }
     else
     {
