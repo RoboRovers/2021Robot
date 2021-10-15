@@ -14,27 +14,12 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.PWMSparkMax;
 import edu.wpi.first.wpilibj.PWMSpeedController;
-import edu.wpi.first.wpilibj.PWMTalonFX;
-import edu.wpi.first.wpilibj.PWMTalonSRX;
 import edu.wpi.first.wpilibj.PWMVictorSPX;
-import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.VictorSP;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.RobotDrive.MotorType;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.cscore.CvSink;
-import edu.wpi.cscore.CvSource;
-import edu.wpi.cscore.MjpegServer;
-import edu.wpi.cscore.UsbCamera;
-//import edu.wpi.first.wpilibj.Encoder;
-//import cougarecho.record.Recorder;
-//import sun.jvm.hotspot.ci.ciMethod;
-//import sun.security.provider.CtrDrbg;
 
 
 /*
@@ -84,13 +69,9 @@ public class Robot extends TimedRobot {
   private final PWMVictorSPX      m_launcher1   = new PWMVictorSPX(4);    //bottom      //for The Launching Mechanism
   private final PWMVictorSPX      m_launcher2   = new PWMVictorSPX(5);                  //top Motor
   private final PWMSparkMax       m_light       = new PWMSparkMax(3);                   //for the lights
-  private final Joystick          m_stick       = new Joystick(0);                      //Joystick Controller right
-  private final Joystick          m_stick_left  = new Joystick(1);                      //Joystick Controller left
+  private final Joystick          m_stick       = new Joystick(0);                      //Joystick Controller
   private final Timer             m_timer       = new Timer();                          //Timer object
-  private final XboxController    m_controller  = new XboxController(2);                //XBox Controller
-  private final UsbCamera         camera        = new UsbCamera("Camera", 0);            //Camera
-  private final MjpegServer       jpegServer1   = new MjpegServer("serve_USB Camera", 25); //mJpegServer
-  private final CvSink            cvSink        = new CvSink("opencv_USB Camera 0");    //CvSink
+  private final Climber           m_climber     = new PWMSpakMax(6);                    //Climbers
 
   public static boolean controlsReversed;
   public static boolean driveSwitch;
@@ -110,7 +91,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-
   }
 
   @Override
@@ -137,10 +117,11 @@ public class Robot extends TimedRobot {
       m_intake.stopMotor();
     }
 
+    
+
     if (controlsReversed)
     {
       m_robotDrive.arcadeDrive((m_stick.getY()),-m_stick.getX(), true);
-      
     }
     else
     {
@@ -159,9 +140,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
-    //m_intake.setSpeed(0.2);
-    
-    
     if (autonomousTestCount < 100) {
       m_robotDrive.arcadeDrive(0.5, 0);
       autonomousTestCount += 1;
@@ -169,43 +147,7 @@ public class Robot extends TimedRobot {
     else {
       m_robotDrive.arcadeDrive(0, 0);
     }
-    
 
-    /*if (m_timer.get() < 3.0) {
-      m_robotDrive.arcadeDrive(0.4, 0.0); // drive forwards half speed
-    }
-    else if (m_timer.get() > 3.0 && m_timer.get() < 6.0)
-    {
-      m_robotDrive.arcadeDrive(-0.4, 0.0); //drive backwards half speed
-    }
-    else if (m_timer.get() > 6.0 && m_timer.get() < 9.0)
-    {
-      m_robotDrive.arcadeDrive(0.5, -0.45);
-    }
-    else if (m_timer.get() > 9.0 && m_timer.get() < 12.0)
-    {
-      m_intake.setSpeed(-0.4); //intake
-      m_light.set(0.61);
-      m_robotDrive.arcadeDrive(0.4, 0.0);
-    }
-    else if (m_timer.get() > 12.0 && m_timer.get() < 15.0)
-    {
-      m_intake.setSpeed(0.4); //outtake
-      m_light.set(0.69);
-      m_robotDrive.arcadeDrive(-0.4, 0.0);
-    } 
-    if (m_timer.get() < 15.0)
-    {
-      m_robotDrive.arcadeDrive(-0.4, 0.0);
-    }
-    else
-    {
-      m_light.stopMotor();
-      m_intake.setSpeed(0);
-      m_robotDrive.stopMotor(); // stop robot
-    }*/ 
-    //Forward(0.3,0.0);
-    //m_robotDrive.arcadeDrive(0.3,0.0);
   }
 
 }
