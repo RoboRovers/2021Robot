@@ -71,7 +71,7 @@ public class Robot extends TimedRobot {
   private final PWMSparkMax       m_light       = new PWMSparkMax(3);                   //for the lights
   private final Joystick          m_stick       = new Joystick(0);                      //Joystick Controller
   private final Timer             m_timer       = new Timer();                          //Timer object
-  private final Climber           m_climber     = new PWMSpakMax(6);                    //Climbers
+  private final PWMSparkMax       m_climber     = new PWMSparkMax(6);                    //Climbers
 
   public static boolean controlsReversed;
   public static boolean driveSwitch;
@@ -95,22 +95,43 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
-    if (m_stick.getTriggerReleased()) {
-      m_intake.setSpeed(0.2);
+//99-103=intake motor foward and reverse motion
+    if (m_stick.getTriggerPressed()) {
+      m_intake.setSpeed(0.5);
     }
-
+    if (m_stick.getTriggerReleased()) {
+      m_intake.setSpeed(0);
+    }
+    if (m_stick.getRawButtonPressed(4)) {
+      m_intake.setSpeed(-0.5);
+    }
+    if (m_stick.getRawButtonReleased(4)) {
+      m_intake.setSpeed(0);
+    }
+//106-109=Reverse controls on button 2
     if (m_stick.getRawButtonReleased(2))
     {
       controlsReversed = !controlsReversed;
     }
-
-    if (m_stick.getRawButtonReleased(3)) {
-      Launcher(0.2);
-      m_intake.setSpeed(0.2);
+    
+//111-116=launcher set speeds
+    if (m_stick.getRawButtonPressed(3)) {
+      Launcher(0.5);
     }
-
-    if (m_stick.getRawButtonReleased(12)) 
+    if (m_stick.getRawButtonReleased(3)) {
+      m_launcher1.setSpeed(0);
+      m_launcher2.setSpeed(0);
+    }
+    
+    if (m_stick.getRawButtonPressed(5)) {
+      Launcher(0.9);
+    }
+    if (m_stick.getRawButtonReleased(5)) {
+      m_launcher1.setSpeed(0);
+      m_launcher2.setSpeed(0);
+    }
+//118-123=Stop all motors button 6
+    if (m_stick.getRawButtonReleased(6)) 
     {
       m_launcher1.stopMotor();
       m_launcher2.stopMotor();
@@ -118,7 +139,7 @@ public class Robot extends TimedRobot {
     }
 
     
-
+//127-135=Driving controls and reverse
     if (controlsReversed)
     {
       m_robotDrive.arcadeDrive((m_stick.getY()),-m_stick.getX(), true);
@@ -128,7 +149,7 @@ public class Robot extends TimedRobot {
       m_robotDrive.arcadeDrive(-(m_stick.getY()), (m_stick.getX()), true);
     }
   }
-  
+  //136-156=old autonomous mode (WIP)
   @Override
   public void autonomousInit() {
     //m_timer.reset();
