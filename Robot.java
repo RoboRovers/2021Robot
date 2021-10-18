@@ -76,6 +76,7 @@ public class Robot extends TimedRobot {
   public static boolean controlsReversed;
   public static boolean driveSwitch;
   public static int autonomousTestCount;
+  Public static double varSpeed;
 
   public void Launcher(double speed)
   {
@@ -91,6 +92,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    varied = 0.0;
   }
 
   @Override
@@ -137,7 +139,29 @@ public class Robot extends TimedRobot {
       m_launcher2.stopMotor();
       m_intake.stopMotor();
     }
-
+    if (m_stick.getRawButtonPressed(7)) {
+      varSpeed += 0.2;
+      if (varSpeed > 1.0) {
+        varSpeed = 1.0;
+      }
+      m_intake.setSpeed(varSpeed);
+    }
+    if (m_stick.getRawButtonReleased(7)) {
+      m_intake.setSpeed(0.0);
+      varSpeed = 0.0;
+    }
+    if (m_stick.getRawButtonPressed(8)) {
+      varSpeed += 0.2;
+      if (varSpeed > 1.0) {
+        varSpeed = 1.0;
+      }
+      Launcher(varSpeed);
+    }
+    if (m_stick.getRawButtonReleased(8)) {
+      m_launcher1.setSpeed(0.0);
+      m_launcher2.setSpeed(0.0);
+      varSpeed = 0.0;
+    }
     
 //127-135=Driving controls and reverse
     if (controlsReversed)
