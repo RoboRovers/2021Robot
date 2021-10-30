@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.RobotDrive.MotorType;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+//import com.revrobotics;
 
 
 /*
@@ -66,27 +67,30 @@ public class Robot extends TimedRobot {
   private final PWMVictorSPX      m_right       = new PWMVictorSPX(1);                  //Sets up right side of drive motors
   private final DifferentialDrive m_robotDrive  = new DifferentialDrive(m_left,m_right);//Initializes the drive function to use both sets of drive motors
   private final PWMVictorSPX      m_intake      = new PWMVictorSPX(9);                  //for intake/outtake
-  private final PWMVictorSPX      m_launcher1   = new PWMVictorSPX(4);    //bottom      //for The Launching Mechanism
-  private final PWMVictorSPX      m_launcher2   = new PWMVictorSPX(5);                  //top Motor
+  private final PWMVictorSPX      m_launcherBottom   = new PWMVictorSPX(4);    //bottom      //for The Launching Mechanism
+  private final PWMVictorSPX      m_launcherTop   = new PWMVictorSPX(5);                  //top Motor
   private final PWMSparkMax       m_light       = new PWMSparkMax(3);                   //for the lights
   private final Joystick          m_stick       = new Joystick(0);                      //Joystick Controller
+  private final Joystick          m_stick2       = new Joystick(1);
   private final Timer             m_timer       = new Timer();                          //Timer object
-  private final PWMSparkMax       m_climber     = new PWMSparkMax(6);                    //Climbers
+  private final PWMSparkMax       m_climber     = new PWMSparkMax(2);                    //Climbers
 
   public static boolean controlsReversed;
   public static boolean driveSwitch;
   public static int autonomousTestCount;
+  public static double topLaunchSpeed;
 
   public void Launcher(double speed)
   {
-    m_launcher1.setSpeed(speed);             //Bottom
-    m_launcher2.setSpeed(-(speed - 0.1));    //Top
+    m_launcherBottom.setSpeed(speed);             //Bottom
+    m_launcherTop.setSpeed(-(speed - 0.3));    //Top
   }
 
   @Override
   public void robotInit() {
     controlsReversed = false;
     driveSwitch = false;
+    topLaunchSpeed = -1.0;
   }
 
   @Override
@@ -95,7 +99,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-//99-103=intake motor foward and reverse motion
+    //99-103=intake motor foward and reverse motion
     if (m_stick.getTriggerPressed()) {
       m_intake.setSpeed(0.5);
     }
@@ -108,45 +112,59 @@ public class Robot extends TimedRobot {
     if (m_stick.getRawButtonReleased(4)) {
       m_intake.setSpeed(0);
     }
-//106-109=Reverse controls on button 2
+    //106-109=Reverse controls on button 2
     if (m_stick.getRawButtonReleased(2))
     {
       controlsReversed = !controlsReversed;
     }
     
-//111-116=launcher set speeds
+    //111-116=launcher set speeds
     if (m_stick.getRawButtonPressed(3)) {
       Launcher(0.5);
     }
     if (m_stick.getRawButtonReleased(3)) {
-      m_launcher1.setSpeed(0);
-      m_launcher2.setSpeed(0);
+      m_launcherBottom.setSpeed(0);
+      m_launcherTop.setSpeed(0);
     }
     
     if (m_stick.getRawButtonPressed(5)) {
-      Launcher(0.9);
+      //Launcher(0.9);
+      if (m_launcherTop.getSpeed() == 0.0) {
+        m_launcherTop.setSpeed(-1.0);
+      }
+      else if (m_launcherTop.getSpeed() != -0.4) {
+        m_launcherTop.setSpeed(m_launcherTop.getSpeed() + 0.6);
+      }
+      m_launcherBottom.setSpeed(1);
+      
+
     }
     if (m_stick.getRawButtonReleased(5)) {
-      m_launcher1.setSpeed(0);
-      m_launcher2.setSpeed(0);
+      m_launcherBottom.setSpeed(0);
+      m_launcherTop.setSpeed(0);
     }
-//118-123=Stop all motors button 6
+    //118-123=Stop all motors button 6
     if (m_stick.getRawButtonReleased(6)) 
     {
-      m_launcher1.stopMotor();
-      m_launcher2.stopMotor();
+      m_launcherBottom.stopMotor();
+      m_launcherTop.stopMotor();
       m_intake.stopMotor();
     }
-
+    if (m_stick.getRawButtonPressed(11)) {
+      m_climber.setSpeed(0.6);
+    }
+    if (m_stick.getRawButtonReleased(11)) {
+      m_climber.setSpeed(0);
+    }
     
-//127-135=Driving controls and reverse
+    //127-135=Driving controls and reverse
     if (controlsReversed)
     {
-      m_robotDrive.arcadeDrive((m_stick.getY()),-m_stick.getX(), true);
+      m_robotDrive.arcadeDrive((m_stick.getY()), -(m_stick.getX()), true);
     }
     else
     {
-      m_robotDrive.arcadeDrive(-(m_stick.getY()), (m_stick.getX()), true);
+      m_robotDrive.arcadeDrive(-(m_stick.getY()), m_stick.getX(), true);
     }
   }
   //136-156=old autonomous mode (WIP)
@@ -169,6 +187,70 @@ public class Robot extends TimedRobot {
       m_robotDrive.arcadeDrive(0, 0);
     }
 
+  }
+
+  public void testPeriodic() {
+    if (m_stick2.getTriggerPressed()) {
+      m_intake.setSpeed(0.5);
+    }
+    if (m_stick2.getTriggerReleased()) {
+      m_intake.setSpeed(0);
+    }
+    if (m_stick2.getRawButtonPressed(4)) {
+      m_intake.setSpeed(-0.5);
+    }
+    if (m_stick2.getRawButtonReleased(4)) {
+      m_intake.setSpeed(0);
+    }
+    //106-109=Reverse controls on button 2
+    if (m_stick.getRawButtonReleased(2))
+    {
+      controlsReversed = !controlsReversed;
+    }
+    
+    //111-116=launcher set speeds
+    if (m_stick2.getRawButtonPressed(3)) {
+      Launcher(0.5);
+    }
+    if (m_stick2.getRawButtonReleased(3)) {
+      m_launcherBottom.setSpeed(0);
+      m_launcherTop.setSpeed(0);
+    }
+    
+    if (m_stick2.getRawButtonPressed(5)) {
+      //Launcher(0.9);
+      if (m_launcherTop.getSpeed() == 0.0) {
+        m_launcherTop.setSpeed(-1.0);
+      }
+      else if (m_launcherTop.getSpeed() != -0.4) {
+        m_launcherTop.setSpeed(m_launcherTop.getSpeed() + 0.6);
+      }
+      m_launcherBottom.setSpeed(1);
+      
+
+    }
+    if (m_stick2.getRawButtonReleased(5)) {
+      m_launcherBottom.setSpeed(0);
+      m_launcherTop.setSpeed(0);
+    }
+    //118-123=Stop all motors button 6
+    if (m_stick2.getRawButtonReleased(6)) 
+    {
+      m_launcherBottom.stopMotor();
+      m_launcherTop.stopMotor();
+      m_intake.stopMotor();
+    }
+
+    
+    //127-135=Driving controls and reverse
+    if (controlsReversed)
+    {
+      m_robotDrive.arcadeDrive((m_stick.getY()), -(m_stick.getX()), true);
+    }
+    else
+    {
+      m_robotDrive.arcadeDrive(-(m_stick.getY()), m_stick.getX(), true);
+    }
   }
 
 }
