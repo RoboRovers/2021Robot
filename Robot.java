@@ -10,6 +10,7 @@ package frc.robot;
 import java.lang.ModuleLayer.Controller;
 import java.sql.Driver;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.PWMSparkMax;
@@ -74,6 +75,7 @@ public class Robot extends TimedRobot {
   private final Joystick          m_stick2       = new Joystick(1);
   private final Timer             m_timer       = new Timer();                          //Timer object
   private final PWMSparkMax       m_climber     = new PWMSparkMax(2);                    //Climbers
+  private final XboxController    m_controller  = new XboxController(1);
 
   public static boolean controlsReversed;
   public static boolean driveSwitch;
@@ -120,15 +122,7 @@ public class Robot extends TimedRobot {
     }
     
     //111-116=launcher set speeds
-    if (m_stick.getRawButtonPressed(3)) {
-      Launcher(0.5);
-    }
-    if (m_stick.getRawButtonReleased(3)) {
-      m_launcherBottom.setSpeed(0);
-      m_launcherTop.setSpeed(0);
-    }
-    
-    if (m_stick.getRawButtonPressed(5)) {
+    if (m_controller.getRawButtonPressed(5)) {
       //Launcher(0.9);
       if (m_launcherTop.getSpeed() == 0.0) {
         m_launcherTop.setSpeed(-1.0);
@@ -138,23 +132,18 @@ public class Robot extends TimedRobot {
       }
       m_launcherBottom.setSpeed(1);
       
-
     }
-    if (m_stick.getRawButtonReleased(5)) {
+    if (m_controller.getRawButtonReleased(5)) {
       m_launcherBottom.setSpeed(0);
       m_launcherTop.setSpeed(0);
     }
+    
     //118-123=Stop all motors button 6
-    if (m_stick.getRawButtonReleased(6)) 
-    {
-      m_launcherBottom.stopMotor();
-      m_launcherTop.stopMotor();
-      m_intake.stopMotor();
-    }
-    if (m_stick.getRawButtonPressed(11)) {
+
+    if (m_controller.getRawButtonPressed(6)) {
       m_climber.setSpeed(0.6);
     }
-    if (m_stick.getRawButtonReleased(11)) {
+    if (m_controller.getRawButtonReleased(6)) {
       m_climber.setSpeed(0);
     }
     
@@ -188,71 +177,6 @@ public class Robot extends TimedRobot {
       m_robotDrive.arcadeDrive(0, 0);
     }
 
-  }
-
-  
-  public void practicePeriodic() {
-    if (m_stick2.getTriggerPressed()) {
-      m_intake.setSpeed(0.5);
-    }
-    if (m_stick2.getTriggerReleased()) {
-      m_intake.setSpeed(0);
-    }
-    if (m_stick2.getRawButtonPressed(4)) {
-      m_intake.setSpeed(-0.5);
-    }
-    if (m_stick2.getRawButtonReleased(4)) {
-      m_intake.setSpeed(0);
-    }
-    //106-109=Reverse controls on button 2
-    if (m_stick.getRawButtonReleased(2))
-    {
-      controlsReversed = !controlsReversed;
-    }
-    
-    //111-116=launcher set speeds
-    if (m_stick2.getRawButtonPressed(3)) {
-      Launcher(0.5);
-    }
-    if (m_stick2.getRawButtonReleased(3)) {
-      m_launcherBottom.setSpeed(0);
-      m_launcherTop.setSpeed(0);
-    }
-    
-    if (m_stick2.getRawButtonPressed(5)) {
-      //Launcher(0.9);
-      if (m_launcherTop.getSpeed() == 0.0) {
-        m_launcherTop.setSpeed(-1.0);
-      }
-      else if (m_launcherTop.getSpeed() != -0.4) {
-        m_launcherTop.setSpeed(m_launcherTop.getSpeed() + 0.6);
-      }
-      m_launcherBottom.setSpeed(1);
-      
-
-    }
-    if (m_stick2.getRawButtonReleased(5)) {
-      m_launcherBottom.setSpeed(0);
-      m_launcherTop.setSpeed(0);
-    }
-    //118-123=Stop all motors button 6
-    if (m_stick2.getRawButtonReleased(6)) 
-    {
-      m_launcherBottom.stopMotor();
-      m_launcherTop.stopMotor();
-      m_intake.stopMotor();
-    }
-
-    
-    //127-135=Driving controls and reverse
-    if (controlsReversed)
-    {
-      m_robotDrive.arcadeDrive((m_stick.getY()), -(m_stick.getX()), true);
-    }
-    else
-    {
-      m_robotDrive.arcadeDrive(-(m_stick.getY()), m_stick.getX(), true);
-    }
   }
 
   @Override
