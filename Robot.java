@@ -95,6 +95,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    //varied = 0.0;
   }
 
   @Override
@@ -160,7 +161,7 @@ public class Robot extends TimedRobot {
     //127-135=Driving controls and reverse
     if (controlsReversed)
     {
-      m_robotDrive.arcadeDrive((m_stick.getY()), -(m_stick.getX()), true);
+      m_robotDrive.arcadeDrive((m_stick.getY()), (m_stick.getX()), true);
     }
     else
     {
@@ -189,7 +190,8 @@ public class Robot extends TimedRobot {
 
   }
 
-  public void testPeriodic() {
+  
+  public void practicePeriodic() {
     if (m_stick2.getTriggerPressed()) {
       m_intake.setSpeed(0.5);
     }
@@ -250,6 +252,20 @@ public class Robot extends TimedRobot {
     else
     {
       m_robotDrive.arcadeDrive(-(m_stick.getY()), m_stick.getX(), true);
+    }
+  }
+
+  @Override
+  public void testInit() {
+    //m_left.setSpeed(0.1);
+  }
+  @Override
+  public void testPeriodic() {
+    if (m_stick.getRawButtonPressed(12)) {
+      m_climber.setSpeed(-0.6);
+    }
+    if (m_stick.getRawButtonReleased(12)) {
+      m_climber.setSpeed(0);
     }
   }
 
