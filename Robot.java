@@ -152,14 +152,14 @@ public class Robot extends TimedRobot {
     //111-116=launcher set speeds
     if (m_controller.getRawButtonPressed(5) && !oneDriverMode) {
       
-      /*if (m_launcherTop.getSpeed() == 0.0) {
+      if (m_launcherTop.getSpeed() == 0.0) {
         m_launcherTop.setSpeed(-1.0);
       }
       else if (m_launcherTop.getSpeed() != -0.4) {
         m_launcherTop.setSpeed(m_launcherTop.getSpeed() + 0.6);
       }
       m_launcherBottom.setSpeed(1);
-      */
+      
     }
     if (m_controller.getRawButtonReleased(5) && !oneDriverMode) {
       m_launcherBottom.setSpeed(0);
@@ -167,7 +167,7 @@ public class Robot extends TimedRobot {
     }
     
     //118-123=Stop all motors button 6
-    /*
+    
     if (m_stick.getRawButtonPressed(11) && oneDriverMode) {
       m_climber.setSpeed(0.6);
     }
@@ -191,10 +191,10 @@ public class Robot extends TimedRobot {
       m_robotDrive.arcadeDrive(-(m_stick.getY()), m_stick.getX(), true);
     }
   }
-  */
-  }
+  
+  
   //136-156=old autonomous mode (WIP)
-  /*
+  
   @Override
   public void autonomousInit() {
     //m_timer.reset();
@@ -232,5 +232,5 @@ public class Robot extends TimedRobot {
     }
 
   }
-  */
+  
 }
