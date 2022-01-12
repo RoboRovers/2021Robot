@@ -63,24 +63,26 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
  */
 public class Robot extends TimedRobot {
 
+
  // private final Encoder           m_encoder     = new Encoder(0,1 );                    //encoder stuff, it good
-  private final PWMVictorSPX      m_left        = new PWMVictorSPX(0);                  //Sets up left side of drive motors
-  private final PWMVictorSPX      m_right       = new PWMVictorSPX(1);                  //Sets up right side of drive motors
+  private final PWMVictorSPX      m_left        = new PWMVictorSPX(1);                  //Sets up left side of drive motors                //Sets up right side of drive motors
+  private final PWMVictorSPX      m_right       = new PWMVictorSPX(2);  
   private final DifferentialDrive m_robotDrive  = new DifferentialDrive(m_left,m_right);//Initializes the drive function to use both sets of drive motors
-  private final PWMVictorSPX      m_intake      = new PWMVictorSPX(9);                  //for intake/outtake
+  private final PWMVictorSPX      m_intake      = new PWMVictorSPX(3);                  //for intake/outtake
   private final PWMVictorSPX      m_launcherBottom   = new PWMVictorSPX(4);    //bottom      //for The Launching Mechanism
   private final PWMVictorSPX      m_launcherTop   = new PWMVictorSPX(5);                  //top Motor
-  private final PWMSparkMax       m_light       = new PWMSparkMax(3);                   //for the lights
+  private final PWMSparkMax       m_light       = new PWMSparkMax(9);                   //for the lights
   private final Joystick          m_stick       = new Joystick(0);                      //Joystick Controller
   private final Joystick          m_stick2       = new Joystick(1);
   private final Timer             m_timer       = new Timer();                          //Timer object
-  private final PWMSparkMax       m_climber     = new PWMSparkMax(2);                    //Climbers
+  private final PWMSparkMax       m_climber     = new PWMSparkMax(0);                    //Climbers
   private final XboxController    m_controller  = new XboxController(1);
 
   public static boolean controlsReversed;
   public static boolean driveSwitch;
   public static int autonomousTestCount;
   public static double topLaunchSpeed;
+  private static boolean oneDriverMode;
 
   public void Launcher(double speed)
   {
@@ -90,60 +92,92 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    controlsReversed = false;
-    driveSwitch = false;
-    topLaunchSpeed = -1.0;
+    
   }
 
   @Override
   public void teleopInit() {
     //varied = 0.0;
+    controlsReversed = false;
+    driveSwitch = false;
+    topLaunchSpeed = -1.0;
+    oneDriverMode = false;
+    m_light.stopMotor();
   }
 
   @Override
   public void teleopPeriodic() {
-    //99-103=intake motor foward and reverse motion
+    
+    //intake on trigger
     if (m_stick.getTriggerPressed()) {
       m_intake.setSpeed(0.5);
     }
     if (m_stick.getTriggerReleased()) {
       m_intake.setSpeed(0);
     }
+    //reverse intake on button 4
     if (m_stick.getRawButtonPressed(4)) {
       m_intake.setSpeed(-0.5);
     }
     if (m_stick.getRawButtonReleased(4)) {
       m_intake.setSpeed(0);
     }
-    //106-109=Reverse controls on button 2
+    //reverse controls on button 2
     if (m_stick.getRawButtonReleased(2))
     {
       controlsReversed = !controlsReversed;
     }
+    //changes between 1 driver and 2 driver
+    if (m_stick.getRawButtonPressed(7)) {
+      oneDriverMode = !oneDriverMode;
+    }
     
-    //111-116=launcher set speeds
-    if (m_controller.getRawButtonPressed(5)) {
-      //Launcher(0.9);
+    if (m_stick.getRawButtonPressed(3)) {
+      
       if (m_launcherTop.getSpeed() == 0.0) {
+        m_launcherTop.setSpeed(-1.0);
+      }
+      else if (m_launcherTop.getSpeed() == -1.0) {
+        m_launcherTop.setSpeed(m_launcherTop.getSpeed() + 0.6);
+      }
+      m_launcherBottom.setSpeed(1);
+      
+    }
+    
+    if (m_stick.getRawButtonReleased(3)) {
+      m_launcherBottom.setSpeed(0);
+      m_launcherTop.setSpeed(0);
+      
+    }
+    //111-116=launcher set speeds
+    if (m_controller.getRawButtonPressed(5) && !oneDriverMode) {
+      
+      /*if (m_launcherTop.getSpeed() == 0.0) {
         m_launcherTop.setSpeed(-1.0);
       }
       else if (m_launcherTop.getSpeed() != -0.4) {
         m_launcherTop.setSpeed(m_launcherTop.getSpeed() + 0.6);
       }
       m_launcherBottom.setSpeed(1);
-      
+      */
     }
-    if (m_controller.getRawButtonReleased(5)) {
+    if (m_controller.getRawButtonReleased(5) && !oneDriverMode) {
       m_launcherBottom.setSpeed(0);
       m_launcherTop.setSpeed(0);
     }
     
     //118-123=Stop all motors button 6
-
-    if (m_controller.getRawButtonPressed(6)) {
+    /*
+    if (m_stick.getRawButtonPressed(11) && oneDriverMode) {
       m_climber.setSpeed(0.6);
     }
-    if (m_controller.getRawButtonReleased(6)) {
+    if (m_stick.getRawButtonReleased(11) && oneDriverMode) {
+      m_climber.setSpeed(0);
+    }
+    if (m_controller.getRawButtonPressed(6) && !oneDriverMode) {
+      m_climber.setSpeed(0.6);
+    }
+    if (m_controller.getRawButtonReleased(6) && !oneDriverMode) {
       m_climber.setSpeed(0);
     }
     
@@ -157,40 +191,46 @@ public class Robot extends TimedRobot {
       m_robotDrive.arcadeDrive(-(m_stick.getY()), m_stick.getX(), true);
     }
   }
+  */
+  }
   //136-156=old autonomous mode (WIP)
+  /*
   @Override
   public void autonomousInit() {
     //m_timer.reset();
     //m_timer.start();
    // m_encoder.reset(); //resets encoder to 0
    // m_encoder.setDistancePerPulse(1.0/360.0);
+
    autonomousTestCount = 0;
   }
 
   @Override
   public void autonomousPeriodic() {
-    if (autonomousTestCount < 100) {
-      m_robotDrive.arcadeDrive(0.5, 0);
+    if (autonomousTestCount < 200) {
+      m_robotDrive.arcadeDrive(-0.5, 0);
+
+      autonomousTestCount += 1;
+    }
+    else if (autonomousTestCount < 400){
+      m_robotDrive.arcadeDrive(0, 0);
+      if (m_launcherTop.getSpeed() == 0.0) {
+        m_launcherTop.setSpeed(-0.8);
+      }
+      else if (m_launcherTop.getSpeed() == -0.8) {
+        m_launcherTop.setSpeed(m_launcherTop.getSpeed() + 0.4);
+      }
+      m_launcherBottom.setSpeed(0.8);
+      m_intake.setSpeed(0.5);
       autonomousTestCount += 1;
     }
     else {
       m_robotDrive.arcadeDrive(0, 0);
+      m_launcherTop.setSpeed(0);
+      m_launcherBottom.setSpeed(0);
+      m_intake.setSpeed(0);
     }
 
   }
-
-  @Override
-  public void testInit() {
-    //m_left.setSpeed(0.1);
-  }
-  @Override
-  public void testPeriodic() {
-    if (m_stick.getRawButtonPressed(12)) {
-      m_climber.setSpeed(-0.6);
-    }
-    if (m_stick.getRawButtonReleased(12)) {
-      m_climber.setSpeed(0);
-    }
-  }
-
+  */
 }
